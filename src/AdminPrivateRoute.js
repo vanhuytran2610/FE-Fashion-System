@@ -4,7 +4,7 @@ import { Redirect, Route } from "react-router-dom";
 import MasterLayout from "./layouts/admin/MasterLayout";
 import axios from "axios";
 import swal from "sweetalert";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
 
 function AdminPrivateRoute({ ...rest }) {
   const history = useHistory();
@@ -12,12 +12,19 @@ function AdminPrivateRoute({ ...rest }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`/api/checkingAuthenticated`).then((response) => {
-      if (response.status === 200) {
-        setAuthenticated(true);
-      }
-      setLoading(false);
-    });
+    axios.get(`/api/checkingAuthenticated`)
+      .then((response) => {
+        if (response.status === 200) {
+          setAuthenticated(true);
+        } else {
+          handleUnauthorized();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        handleUnauthorized();
+        setLoading(false);
+      });
 
     return () => {
       setAuthenticated(false);
@@ -27,27 +34,24 @@ function AdminPrivateRoute({ ...rest }) {
   axios.interceptors.response.use(
     undefined,
     function axiosRetryInterceptor(error) {
-      if (error.response.status === "Unauthorized") {
-        swal("Unauthorized", error.response.data.message, "warning");
+      if (error.response.status === 401) {
+        handleUnauthorized(error.response.data.message);
+      } else if (error.response.status === 403) {
+        handleForbidden(error.response.data.message);
       }
       return Promise.reject(error);
     }
   );
 
-  axios.interceptors.response.use(
-    function (response) {
-      return response;
-    },
-    function (error) {
-      if (error.response.status === 403) {
-        swal("Forbidden", error.response.data.message, "warning");
-        // history.push('/403');
-      } else if (error.response.status === 404) {
-        history.push("/404");
-      }
-      return Promise.reject(error);
-    }
-  );
+  const handleUnauthorized = (message = "Unauthorized: Please log in first") => {
+    swal("Unauthorized", message, "warning");
+    history.push("/login");
+  };
+
+  const handleForbidden = (message = "Access Forbidden: Only admin has access") => {
+    swal("Forbidden", message, "warning");
+    history.push("/login");
+  };
 
   if (loading) {
     return (

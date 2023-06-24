@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
+import { Loading } from "../../Loading";
+import ReactPaginate from "react-paginate";
 import axios from "axios";
 import swal from "sweetalert";
 
@@ -9,14 +11,19 @@ export function ViewProducts() {
   const [products, setProducts] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 2;
+
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
 
   useEffect(() => {
     axios
-      .get("/api/get-all-products")
+      .get("/api/auth/get-all-products")
       .then((response) => {
         if (response.data.status === 200) {
           setProducts(response.data.data);
-          console.log(response.data.data);
         }
         setLoading(false);
       })
@@ -68,9 +75,9 @@ export function ViewProducts() {
           .then((res) => {
             if (res.data.status === 200) {
               swal("Success", res.data.message, "success");
-              setProducts((prevCategoryList) =>
-                prevCategoryList.filter(
-                  (item) => !selectedProducts.includes(item.id)
+              setProducts((prevProductList) =>
+                prevProductList.filter(
+                  (product) => !selectedProducts.includes(product.id)
                 )
               );
               setSelectedProducts([]);
@@ -91,8 +98,8 @@ export function ViewProducts() {
       .then((res) => {
         if (res.data.status === 200) {
           swal("Success", res.data.message, "success");
-          setProducts((prevCategoryList) =>
-            prevCategoryList.filter((item) => item.id !== id)
+          setProducts((prevProductList) =>
+            prevProductList.filter((product) => product.id !== id)
           );
         } else if (res.data.status === 404) {
           swal("Error", res.data.message, "error");
@@ -102,6 +109,10 @@ export function ViewProducts() {
         console.log(error);
       });
   };
+
+  const offset = currentPage * itemsPerPage;
+  const pageCount = Math.ceil(products.length / itemsPerPage);
+  const paginatedProducts = products.slice(offset, offset + itemsPerPage);
 
   return (
     <div className="container p-4">
@@ -119,11 +130,7 @@ export function ViewProducts() {
         </div>
         <div className="card-body">
           {loading ? (
-            <div className="d-flex align-items-center justify-content-center">
-              <div className="spinner-border" role="status">
-                <span className="sr-only"></span>
-              </div>
-            </div>
+            <Loading />
           ) : (
             <div className="table-responsive my-3">
               <table className="table table-bordered table-striped">
@@ -148,7 +155,7 @@ export function ViewProducts() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product, index) => (
+                  {paginatedProducts.map((product, index) => (
                     <tr key={product.id}>
                       <td>
                         <input
@@ -235,6 +242,25 @@ export function ViewProducts() {
                   Delete Selected
                 </button>
               </div>
+              <ReactPaginate
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                breakLabel={"..."}
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePageChange}
+                containerClassName={"pagination justify-content-end"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
+              />
             </div>
           )}
         </div>

@@ -1,9 +1,10 @@
+import { Profile } from "../user/Profile";
 import React from "react";
 
-function Profile () {
+function ProfileAdmin () {
     return(
-        <h1>I am Profile</h1>
+        <Profile />
     );
 }
 
-export default Profile;
+export default ProfileAdmin;

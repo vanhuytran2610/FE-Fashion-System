@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import Navbar from "../../../layouts/user/Navbar";
+import Navbar from "../../../layouts/frontend/Navbar";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 
@@ -12,11 +12,39 @@ function Register() {
     confirm_password: "",
     firstname: "",
     lastname: "",
-    // role: '',
-    // address: '',
-    // phone: '',
+    province_code: "",
+    district_code: "",
+    ward_code: "",
+    address: "",
+    phone: "",
     error_list: [],
   });
+
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  const fetchProvinces = () => {
+    axios.get("/api/getProvince").then((response) => {
+      setProvinces(response.data.province);
+    });
+  };
+
+  const fetchDistricts = (provinceCode) => {
+    axios.get(`/api/getDistrict/${provinceCode}`).then((response) => {
+      setDistricts(response.data.district);
+    });
+  };
+
+  const fetchWards = (districtCode) => {
+    axios.get(`/api/getWard/${districtCode}`).then((response) => {
+      setWards(response.data.ward);
+    });
+  };
 
   const handleInput = (e) => {
     e.persist();
@@ -24,8 +52,46 @@ function Register() {
     //console.log(e.target.email);
   };
 
+  const handleProvinceChange = (e) => {
+    const selectedProvince = e.target.value;
+    setRegister((prevState) => ({
+      ...prevState,
+      province: selectedProvince,
+      district: "", // Reset district value
+      ward: "", // Reset ward value
+    }));
+    fetchDistricts(selectedProvince);
+  };
+
+  const handleDistrictChange = (e) => {
+    const selectedDistrict = e.target.value;
+    setRegister((prevState) => ({
+      ...prevState,
+      district: selectedDistrict,
+      ward: "", // Reset ward value
+    }));
+    fetchWards(selectedDistrict);
+  };
+
+  const handleWardChange = (e) => {
+    const selectedWard = e.target.value;
+    setRegister((prevState) => ({
+      ...prevState,
+      ward: selectedWard,
+    }));
+  };
+
   const registerSubmit = (e) => {
     e.preventDefault();
+
+    const selectedProvince = registerInput.province;
+    const selectedDistrict = registerInput.district;
+    const selectedWard = registerInput.ward;
+
+    if (!selectedProvince || !selectedDistrict || !selectedWard) {
+      // Province, district, or ward is not selected
+      return;
+    }
 
     const data = {
       email: registerInput.email,
@@ -33,23 +99,20 @@ function Register() {
       confirm_password: registerInput.confirm_password,
       firstname: registerInput.firstname,
       lastname: registerInput.lastname,
-      // role: registerInput.role,
-      // address: registerInput.address,
-      // phone: registerInput.phone
+      province_code: selectedProvince,
+      district_code: selectedDistrict,
+      ward_code: selectedWard,
+      address: registerInput.address,
+      phone: registerInput.phone,
     };
-    // console.log(data);
-    // console.log(data.password);
-    // console.log(data.confirm_password);
-    // console.log(data.firstname);
-    // console.log(data.lastname);
 
     try {
       axios.get("/sanctum/csrf-cookie").then((res) => {
         axios.post(`api/register`, data).then((result) => {
           if (result.data.status === 201) {
             localStorage.setItem("auth_token", result.data.token);
-            localStorage.setItem("auth_name", result.data.data.firstname);
-            console.log(result.data.message);
+            localStorage.setItem("auth_name", result.data.data.firstname + " " + result.data.data.lastname);
+            console.log(result.data.data);
             history.push("/");
           } else {
             setRegister({ ...registerInput, error_list: result.data.error });
@@ -128,36 +191,75 @@ function Register() {
                     ></input>
                     <span>{registerInput.error_list.lastname}</span>
                   </div>
-                  {/* <div className="form-group mb-3">
-                                        <label>Province</label>
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>Province</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>District</label>
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>District</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Ward</label>
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>Ward</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Address</label>
-                                        <input type="" name="address" className="form-control" onChange={handleInput} value={registerInput.address}></input>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Phone</label>
-                                        <input type="" name="phone" className="form-control" onChange={handleInput} value={registerInput.phone}></input>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Role</label>
-                                        <input type="" name="role" className="form-control" onChange={handleInput} value={registerInput.role}></input>
-                                    </div> */}
+                  <div className="form-group mb-3">
+                    <label>Province</label>
+                    <select
+                      name="province"
+                      className="form-select"
+                      onChange={handleProvinceChange}
+                      value={registerInput.province}
+                    >
+                      <option value="">Select Province</option>
+                      {provinces.map((province) => (
+                        <option key={province.code} value={province.code}>
+                          {province.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>District</label>
+                    <select
+                      name="district"
+                      className="form-select"
+                      onChange={handleDistrictChange}
+                      value={registerInput.district}
+                    >
+                      <option value="">Select District</option>
+                      {districts.map((district) => (
+                        <option key={district.code} value={district.code}>
+                          {district.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Ward</label>
+                    <select
+                      name="ward"
+                      className="form-select"
+                      onChange={handleWardChange}
+                      value={registerInput.ward}
+                    >
+                      <option value="">Select Ward</option>
+                      {wards.map((ward) => (
+                        <option key={ward.code} value={ward.code}>
+                          {ward.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Address</label>
+                    <input
+                      type=""
+                      name="address"
+                      className="form-control"
+                      onChange={handleInput}
+                      value={registerInput.address}
+                    ></input>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Phone</label>
+                    <input
+                      type=""
+                      name="phone"
+                      className="form-control"
+                      onChange={handleInput}
+                      value={registerInput.phone}
+                    ></input>
+                  </div>
+
                   <div className="form-group mb-3">
                     <button type="submit" className="btn btn-secondary">
                       Register

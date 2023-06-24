@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
+import { Loading } from "../../Loading";
 import { UpdateCategory } from "./UpdateCategory";
 import axios from "axios";
 import swal from "sweetalert";
@@ -10,8 +11,14 @@ export function ViewCategory() {
   const [categoryList, setCategoryList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
     axios
       .get(`/api/get-categories`)
       .then((res) => {
@@ -24,7 +31,33 @@ export function ViewCategory() {
         console.error(err);
         setLoading(false);
       });
-  }, []);
+  };
+
+  const searchCategories = () => {
+    axios
+      .get(`/api/auth/categories/search?q=${searchQuery}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setCategoryList(res.data.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const sortCategories = () => {
+    axios
+      .get(`/api/auth/categories/sort?order=${sortOrder}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setCategoryList(res.data.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const handleCheckboxChange = (e, categoryId) => {
     const checked = e.target.checked;
@@ -124,20 +157,60 @@ export function ViewCategory() {
               to="/admin/add-category"
               className="btn btn-secondary btn-md float-end"
             >
-              <i class="bi bi-plus-circle-fill"></i> Create Category
+              <i className="bi bi-plus-circle-fill"></i> Create Category
             </Link>
           </h4>
         </div>
         <div className="card-body">
           {loading ? (
-            <div className="d-flex align-items-center justify-content-center">
-              <div className="spinner-border" role="status">
-                <span className="sr-only"></span>
-              </div>
-            </div>
+            <Loading />
           ) : (
             <>
-              
+              <div className="row">
+                <div className="mb-3 d-flex col-md-6">
+                  <input
+                    type="text"
+                    className="form-control mx-2"
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={searchCategories}
+                  >
+                    Search
+                  </button>
+                </div>
+                <div className="mb-3 d-flex col-md-6">
+                  <label
+                    className="mx-2 mt-2"
+                    style={{ width: "25%" }}
+                    htmlFor="sortOrder"
+                  >
+                    Sort Order:
+                  </label>
+                  <select
+                    id="sortOrder"
+                    className="form-select mx-2"
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                  >
+                    <option value="">Default</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                  </select>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={sortCategories}
+                  >
+                    Sort
+                  </button>
+                </div>
+              </div>
+
               <table className="table table-striped">
                 <thead>
                   <tr>
@@ -161,9 +234,7 @@ export function ViewCategory() {
                         <input
                           type="checkbox"
                           checked={selectedCategories.includes(item.id)}
-                          onChange={(e) =>
-                            handleCheckboxChange(e, item.id)
-                          }
+                          onChange={(e) => handleCheckboxChange(e, item.id)}
                         />
                       </td>
                       <td>{index + 1}</td>

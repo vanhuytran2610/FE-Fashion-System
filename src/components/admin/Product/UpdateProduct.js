@@ -34,11 +34,17 @@ export function UpdateProduct(props) {
       if (updatedSizes.length === 0) {
         updatedSizes.push({ size_id: value, quantity: "" });
       } else {
-        updatedSizes[index] = { ...updatedSizes[index], [name]: value };
+        if (value === "") {
+          // Retain the previous size_id if not selected
+          updatedSizes[index] = { ...updatedSizes[index], quantity: "" };
+        } else {
+          updatedSizes[index] = { ...updatedSizes[index], [name]: value };
+        }
       }
       return { ...prevProduct, sizes: updatedSizes };
     });
   };
+  
   
   const handleImageAvatar = (e) => {
     setProduct({ ...product, image_avatar: e.target.files[0] });
@@ -101,6 +107,7 @@ export function UpdateProduct(props) {
           image_avatar: productData.image_avatar,
           images: productData.images,
         });
+        console.log(productData)
       } else if (response.data.status === 404) {
         swal("Error", response.data.message, "error");
         history.push("/admin/view-product");
@@ -141,7 +148,9 @@ export function UpdateProduct(props) {
         .then((response) => {
           if (response.data.status === 200) {
             swal("Success", response.data.message, "success");
-            console.log(response.data.data);
+            console.log(response.data);
+            history.push("/admin/view-product")
+            
           } else if (response.data.status === 422) {
             swal("All fields are mandatory", "", "error");
             console.log(response.data.errors);
@@ -150,15 +159,9 @@ export function UpdateProduct(props) {
             history.push("/admin/view-product");
           }
           //setLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          swal(
-            "Error",
-            "An error occurred while updating the product.",
-            "error"
-          );
         });
+        
+        
     } catch (err) {
       console.error(err);
     }

@@ -1,9 +1,10 @@
+import { Link, useHistory } from "react-router-dom";
 import React, { useState } from "react";
 
-import Navbar from "../../../layouts/user/Navbar";
+import { Loading } from "../../Loading";
+import Navbar from "../../../layouts/frontend/Navbar";
 import axios from "axios";
 import swal from "sweetalert";
-import { useHistory } from "react-router-dom";
 
 function Login() {
   const history = useHistory();
@@ -32,24 +33,25 @@ function Login() {
       axios.post(`api/login`, data).then((result) => {
         if (result.data.status === 200) {
           localStorage.setItem("auth_token", result.data.token);
-          localStorage.setItem("auth_name", result.data.data.firstname);
+          localStorage.setItem(
+            "auth_name",
+            result.data.data.firstname + " " + result.data.data.lastname
+          );
           console.log(result.data.message);
-          history.push("/");
-          if (result.data.role === 'Admin') {
-            history.push('/admin/dashboard');
-          }
-          else if (result.data.role === 'User') {
+
+          if (result.data.role === "Admin") {
+            history.push("/admin/dashboard");
+          } else if (result.data.role === "User") {
             history.push("/");
+            window.location.reload();
           }
-        } else if (result.data.status === 'Invalid') {
-            //setLogin({ ...loginInput, invalid: result.data.message });
-            swal("Invalid",result.data.message, "warning");
-        } 
-        else if (result.data.status === 'Error') {
-            //setLogin({ ...loginInput, error: result.data.message });
-            swal("Error",result.data.message, "warning");
-        }
-        else {
+        } else if (result.data.status === "Invalid") {
+          //setLogin({ ...loginInput, invalid: result.data.message });
+          swal("Invalid", result.data.message, "warning");
+        } else if (result.data.status === "Error") {
+          //setLogin({ ...loginInput, error: result.data.message });
+          swal("Error", result.data.message, "warning");
+        } else {
           setLogin({ ...loginInput, error_list: result.data.error });
         }
       });
@@ -94,6 +96,22 @@ function Login() {
                     <button type="submit" className="btn btn-secondary">
                       Login
                     </button>
+                  </div>
+
+                  <div className="d-flex">
+                    NEED AN ACCOUNT, PLEASE{" "}
+                    <Link
+                      className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-dark"
+                      to="/register"
+                    >
+                      <p
+                        className="text-dark mx-1"
+                        style={{ fontWeight: "600" }}
+                      >
+                        REGISTER
+                      </p>
+                    </Link>{" "}
+                    .
                   </div>
                 </form>
               </div>

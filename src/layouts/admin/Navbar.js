@@ -1,80 +1,76 @@
-import { Link } from "react-router-dom"
-import React from "react";
+import React, { useState } from "react";
 
-const Navbar = () => {
-    return (
-        <nav className="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-      {/* <!-- Navbar Brand--> */}
-      <a className="navbar-brand ps-3" href="index.html">
-        Start Bootstrap
-      </a>
-      {/* <!-- Sidebar Toggle--> */}
-      <button
-        className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
-        id="sidebarToggle"
-        href="#!"
-      >
-        <i className="fas fa-bars"></i>
-      </button>
-      {/* <!-- Navbar Search--> */}
-      <form className="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        <div className="input-group">
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Search for..."
-            aria-label="Search for..."
-            aria-describedby="btnNavbarSearch"
-          />
-          <button
-            className="btn btn-secondary"
-            id="btnNavbarSearch"
-            type="button"
-          >
-            <i className="fas fa-search"></i>
-          </button>
-        </div>
-      </form>
-      {/* <!-- Navbar--> */}
-      <ul className="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li className="nav-item dropdown">
-          <Link
-            to="#"
-            className="nav-link dropdown-toggle"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i className="fas fa-user fa-fw"></i>
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+
+const Navbar = ({ handleSidebarToggle }) => {
+  const history = useHistory();
+
+  const logoutSubmit = (e) => {
+    e.preventDefault();
+
+    axios.post(`api/auth/logout`).then((result) => {
+      if (result.data.status === 200) {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_name");
+        console.log(result.data.message);
+        history.push("/");
+      }
+    });
+  };
+
+  var AuthButton = "";
+  if (!localStorage.getItem("auth_token")) {
+    AuthButton = (
+      <ul className="navbar-nav">
+        <li className="nav-item">
+          <Link className="nav-link" to="/register">
+            Register
           </Link>
-          <ul
-            className="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdown"
-          >
-            <li>
-              <Link className="dropdown-item" to="#!">
-                Settings
-              </Link>
-            </li>
-            <li>
-              <Link className="dropdown-item" to="#!">
-                Activity Log
-              </Link>
-            </li>
-            <li>
-              <hr className="dropdown-divider" />
-            </li>
-            <li>
-              <Link className="dropdown-item" to="#!">
-                Logout
-              </Link>
-            </li>
-          </ul>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/login">
+            Login
+          </Link>
         </li>
       </ul>
+    );
+  } else {
+    AuthButton = (
+      <ul className="navbar-nav">
+        <li className="nav-item">
+          <Link className="nav-link" to="/login" onClick={logoutSubmit}>
+            Logout
+          </Link>
+        </li>
+      </ul>
+    );
+  }
+  return (
+    <nav className="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+      <div className="sb-topnav mx-3 navbar navbar-expand navbar-dark">
+        {/* <!-- Navbar Brand--> */}
+        <button
+          className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
+          id="sidebarToggle"
+          onClick={handleSidebarToggle}
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+        <Link className="navbar-brand ps-3" to="/admin">
+          Store Management
+        </Link>
+        {/* <!-- Sidebar Toggle--> */}
+
+        {/* <!-- Navbar Search--> */}
+        <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+          {/* <!-- Navbar--> */}
+          {AuthButton}
+        </ul>
+      </div>
     </nav>
-    )
-}
+  );
+};
 
 export default Navbar;

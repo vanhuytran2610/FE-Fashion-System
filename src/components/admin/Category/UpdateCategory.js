@@ -5,10 +5,15 @@ import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 
-export function UpdateCategory({ categoryId, initialCategoryName, updateCategoryName}) {
+export function UpdateCategory({
+  categoryId,
+  initialCategoryName,
+  updateCategoryName,
+}) {
   const [categoryName, setCategoryName] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  
 
   const fetchCategoryName = () => {
     axios
