@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import React, { useEffect } from "react";
 
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
 
 const Navbar = ({ handleSidebarToggle }) => {
   const history = useHistory();
@@ -10,14 +9,32 @@ const Navbar = ({ handleSidebarToggle }) => {
   const logoutSubmit = (e) => {
     e.preventDefault();
 
-    axios.post(`api/auth/logout`).then((result) => {
-      if (result.data.status === 200) {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_name");
-        console.log(result.data.message);
-        history.push("/");
-      }
-    });
+    const authToken = localStorage.getItem("auth_token");
+
+    if (authToken) {
+      axios
+        .post(`api/auth/logout`)
+        .then((result) => {
+          if (result.data.status === 200) {
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("auth_name");
+            console.log(result.data.message);
+            window.location.replace("/");
+          }
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
+            // Handle 401 Unauthorized
+            console.log("Unauthorized: Please log in first");
+            // Redirect to login page
+            history.push("/login");
+          } else {
+            console.log(error.response.data.message);
+          }
+        });
+    } else {
+      history.push("/");
+    }
   };
 
   var AuthButton = "";
@@ -47,6 +64,7 @@ const Navbar = ({ handleSidebarToggle }) => {
       </ul>
     );
   }
+
   return (
     <nav className="sb-topnav navbar navbar-expand navbar-dark bg-dark">
       <div className="sb-topnav mx-3 navbar navbar-expand navbar-dark">
@@ -56,7 +74,7 @@ const Navbar = ({ handleSidebarToggle }) => {
           id="sidebarToggle"
           onClick={handleSidebarToggle}
         >
-          <i class="fas fa-bars"></i>
+          <i className="fas fa-bars"></i>
         </button>
         <Link className="navbar-brand ps-3" to="/admin">
           Store Management

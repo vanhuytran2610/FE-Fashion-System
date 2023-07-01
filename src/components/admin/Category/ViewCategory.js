@@ -198,8 +198,8 @@ export function ViewCategory() {
                     onChange={(e) => setSortOrder(e.target.value)}
                   >
                     <option value="">Default</option>
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
+                    <option value="asc">Oldest</option>
+                    <option value="desc">Newest</option>
                   </select>
                   <button
                     type="button"

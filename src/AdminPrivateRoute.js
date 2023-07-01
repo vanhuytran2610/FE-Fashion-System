@@ -11,6 +11,11 @@ function AdminPrivateRoute({ ...rest }) {
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  if (!localStorage.getItem("auth_token")) {
+    swal("Warning", "Please log in first", "error");
+    history.push("/login");
+  }
+
   useEffect(() => {
     axios.get(`/api/checkingAuthenticated`)
       .then((response) => {

@@ -73,6 +73,37 @@ export function Cart() {
     });
   };
 
+  const handleCheckout = () => {
+    let hasInvalidQuantity = false;
+
+    cart.map((item) => {
+      console.log(item.size_id);
+      const product_size = item.product.sizes.find(
+        (size) => (size.id === item.size_id)
+      );
+      console.log(product_size);
+      if (item.product_quantity > product_size.pivot.quantity) {
+        hasInvalidQuantity = true;
+      }
+    });
+
+    if (hasInvalidQuantity) {
+      swal("Warning", "Not enough product in stock", "warning");
+    } else {
+      swal({
+        title: "Do you want to check out this cart?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((confirm) => {
+        if(confirm) {
+          history.push("/checkout");
+        }
+      })
+      
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -113,21 +144,6 @@ export function Cart() {
                   style={{ fontWeight: "700" }}
                 >
                   Cart ({cart.length})
-                </button>
-              </li>
-              <li className="nav-item" role="presentation">
-                <button
-                  className="nav-link text-dark"
-                  id="favorite-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#favorite"
-                  type="button"
-                  role="tab"
-                  aria-controls="favorite"
-                  aria-selected="false"
-                  style={{ fontWeight: "700" }}
-                >
-                  Favorite
                 </button>
               </li>
             </ul>
@@ -249,19 +265,11 @@ export function Cart() {
                   </div>
                 )}
               </div>
-              <div
-                className="tab-pane fade"
-                id="favorite"
-                role="tabpanel"
-                aria-labelledby="favorite-tab"
-              >
-                .f..
-              </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer total={total_price_all} />
+      <Footer total={total_price_all} onCheckout={handleCheckout} />
     </div>
   );
 }

@@ -1,16 +1,18 @@
 import "moment-timezone";
 
+import { Link, useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
 import { Loading } from "../Loading";
 import axios from "axios";
 import moment from "moment";
+import swal from "sweetalert";
 
 export function Order() {
+  const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
-  const [visibleOrders, setVisibleOrders] = useState(1); // Number of orders to display initially
+  const [visibleOrders, setVisibleOrders] = useState(3); // Number of orders to display initially
   const [showLoadMore, setShowLoadMore] = useState(true);
 
   const handleLoadMore = () => {
@@ -32,6 +34,11 @@ export function Order() {
             setOrders(res.data.data);
             setLoading(false);
             console.log(res.data.data);
+          }
+          else if (res.data.status === 401) {
+            swal("Warning", res.data.message, "warning").then(() => {
+              history.push("/login");
+            });
           }
         }
       })
@@ -106,7 +113,7 @@ export function Order() {
                         </p>
                       </li>
                       <li>
-                        <p>Payment: {order.status === 0 ? "Paid" : "Unpaid"}</p>
+                        <p>Payment: {order.status === 0 ? "Unpaid" : "Internet Banking"}</p>
                       </li>
                     </ul>
                   </div>
@@ -114,6 +121,7 @@ export function Order() {
               </>
             ))}
           </div>
+          <hr />
         </>
       );
     });

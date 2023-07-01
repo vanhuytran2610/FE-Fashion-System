@@ -89,7 +89,7 @@ export function OrderDetail(props) {
                   </Link>
                 </div>
                 <div
-                  className="col-md-5 my-3 mx-4 "
+                  className="col-md-5 my-5 mx-4 "
                   style={{ fontWeight: "600" }}
                 >
                   <ul
@@ -130,12 +130,6 @@ export function OrderDetail(props) {
                     <li>
                       <p>Payment Mode: {order.payment_mode}</p>
                     </li>
-                    <li>
-                      <p>Payment: {order.status === 0 ? "Unpaid" : "Paid"}</p>
-                    </li>
-                    <button className="btn btn-dark" disabled={order.status===0}>
-                        Payment Confirm
-                    </button>
                   </ul>
                 </div>
               </div>

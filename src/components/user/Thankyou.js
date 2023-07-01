@@ -1,5 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import React from "react";
 
 export function Thankyou() {
   return (
@@ -11,9 +11,13 @@ export function Thankyou() {
         Thank you for your order
       </h4>
       <div className="align-items-center justify-content-center d-flex my-5">
-      <Link to="/" className="input-group-text btn btn-dark ">Back to Home</Link>
+        <Link to="/" className="input-group-text btn btn-dark mx-3">
+          Back to Home
+        </Link>
+        <Link to="/order-list" className="input-group-text btn btn-dark mx-3">
+          My Order List
+        </Link>
       </div>
-      
     </div>
   );
 }

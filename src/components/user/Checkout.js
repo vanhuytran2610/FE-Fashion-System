@@ -41,14 +41,7 @@ export function Checkout() {
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
   var total_price_all = 0;
-  const [showModal, setShowModal] = useState(false);
-
-  const handleClick = () => {
-    setShowModal(true);
-  };
-  const closeModal = () => {
-    setShowModal(false);
-  };
+  const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
     fetchProvinces();
@@ -62,12 +55,18 @@ export function Checkout() {
 
   const fetchDistricts = (provinceCode) => {
     axios.get(`/api/getDistrict/${provinceCode}`).then((response) => {
+      if (response.data.status === 404) {
+        console.log(response.data.message);
+      }
       setDistricts(response.data.district);
     });
   };
 
   const fetchWards = (districtCode) => {
     axios.get(`/api/getWard/${districtCode}`).then((response) => {
+      if (response.data.status === 404) {
+        console.log(response.data.message);
+      }
       setWards(response.data.ward);
     });
   };
@@ -111,7 +110,9 @@ export function Checkout() {
           console.log(cart);
 
           if (!res.data.data[0].user) {
-            history.push("/");
+            swal("Warning", "You are ordered", "warning").then(
+              history.push("/")
+            );
           }
           setLoading(false);
           setCheckoutInput((prevState) => ({
@@ -165,7 +166,7 @@ export function Checkout() {
     setCheckoutInput({ ...checkoutInput, [e.target.name]: e.target.value });
   };
 
-  const submitOrder = (e, payment_mode, status) => {
+  const submitOrder = (e, payment_mode) => {
     e.preventDefault();
 
     const selectedProvince = checkoutInput.province;
@@ -187,34 +188,48 @@ export function Checkout() {
       district_code: selectedDistrict,
       ward_code: selectedWard,
       payment_mode: payment_mode,
-      status: status,
+      status: 0,
     };
 
     switch (payment_mode) {
       case "cash":
-        axios.post(`/api/place-order`, data).then((res) => {
-          if (res.data.status === 200) {
-            window.location.replace("/thankyou");
+        swal({
+          title: "Are you sure you want to pay this order?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((confirm) => {
+          if (confirm) {
+            axios.post(`/api/place-order`, data).then((res) => {
+              if (res.data.status === 200) {
+                swal("Success", res.data.message, "success").then(() => {
+                  window.location.replace("/thankyou");
+                });
 
-            setError([]);
-          } else if (res.data.status === 422) {
-            swal("All fields are mandetory", "", "error");
-            setError(res.data.errors);
+                setError([]);
+              } else if (res.data.status === 422) {
+                swal("All fields are mandatory", "", "error");
+                setError(res.data.errors);
+              } else if (res.data.status === 400) {
+                swal("Error", res.data.message, "error").then(() => {
+                  window.location.replace("/");
+                });
+              } else if (res.data.status === 401) {
+                swal("Error", res.data.message, "error").then(() => {
+                  window.location.replace("/");
+                });
+              } else if (res.data.status === 500) {
+                swal("Error", res.data.message, "error").then(() => {
+                  window.location.replace("/");
+                });
+              }
+            });
           }
         });
+
         break;
 
-      case "internet banking":
-        axios.post(`/api/place-order`, data).then((res) => {
-          if (res.data.status === 200) {
-            swal("Order Placed Successfully", res.data.message, "success");
-            setError([]);
-            history.push("/thank-you");
-          } else if (res.data.status === 422) {
-            swal("All fields are mandetory", "", "error");
-            setError(res.data.errors);
-          }
-        });
+      default:
         break;
     }
   };
@@ -237,76 +252,99 @@ export function Checkout() {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group mb-3">
-                      <label> First Name</label>
+                      <label>
+                        <span className="required text-danger">*</span> First
+                        Name
+                      </label>
                       <input
                         type="text"
                         name="firstname"
                         onChange={handleInput}
                         value={checkoutInput.firstname}
                         className="form-control"
+                        required
                       />
                       <small className="text-danger">{error.firstname}</small>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group mb-3">
-                      <label> Last Name</label>
+                      <label>
+                        <span className="required text-danger">*</span> Last
+                        Name
+                      </label>
                       <input
                         type="text"
                         name="lastname"
                         onChange={handleInput}
                         value={checkoutInput.lastname}
                         className="form-control"
+                        required
                       />
                       <small className="text-danger">{error.lastname}</small>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group mb-3">
-                      <label> Phone Number</label>
+                      <label>
+                        <span className="required text-danger">*</span> Phone
+                        Number
+                      </label>
                       <input
                         type="text"
                         name="phone"
                         onChange={handleInput}
                         value={checkoutInput.phone}
                         className="form-control"
+                        required
                       />
                       <small className="text-danger">{error.phone}</small>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group mb-3">
-                      <label> Email Address</label>
+                      <label>
+                        <span className="required text-danger">*</span> Email
+                        Address
+                      </label>
                       <input
                         type="email"
                         name="email"
                         onChange={handleInput}
                         value={checkoutInput.email}
                         className="form-control"
+                        required
                       />
                       <small className="text-danger">{error.email}</small>
                     </div>
                   </div>
                   <div className="col-md-12">
                     <div className="form-group mb-3">
-                      <label> Full Address</label>
+                      <label>
+                        <span className="required text-danger">*</span> Full
+                        Address
+                      </label>
                       <textarea
                         rows="3"
                         name="address"
                         onChange={handleInput}
                         value={checkoutInput.address}
                         className="form-control"
+                        required
                       ></textarea>
                       <small className="text-danger">{error.address}</small>
                     </div>
                   </div>
                   <div className="form-group mb-3">
-                    <label>Province</label>
+                    <label>
+                      <span className="required text-danger">*</span> Province
+                    </label>
                     <select
                       name="province"
                       className="form-select"
                       onChange={handleProvinceChange}
                       value={checkoutInput.province}
+                      required
                     >
                       <option value="">Select Province</option>
                       {provinces.map((province) => (
@@ -317,12 +355,15 @@ export function Checkout() {
                     </select>
                   </div>
                   <div className="form-group mb-3">
-                    <label>District</label>
+                    <label>
+                      <span className="required text-danger">*</span> District
+                    </label>
                     <select
                       name="district"
                       className="form-select"
                       onChange={handleDistrictChange}
                       value={checkoutInput.district}
+                      required
                     >
                       <option value="">Select District</option>
                       {districts.map((district) => (
@@ -333,12 +374,15 @@ export function Checkout() {
                     </select>
                   </div>
                   <div className="form-group mb-3">
-                    <label>Ward</label>
+                    <label>
+                      <span className="required text-danger">*</span> Ward
+                    </label>
                     <select
                       name="ward"
                       className="form-select"
                       onChange={handleWardChange}
                       value={checkoutInput.ward}
+                      required
                     >
                       <option value="">Select Ward</option>
                       {wards.map((ward) => (
@@ -359,17 +403,10 @@ export function Checkout() {
                       </button>
                       <button
                         type="button"
-                        className="btn btn-dark mx-1"
-                        onClick={(e) => submitOrder(e, "cash", 0)}
-                      >
-                        Cash
-                      </button>
-                      <button
-                        type="button"
                         className="btn btn-warning mx-1"
-                        onClick={handleClick}
+                        onClick={(e) => submitOrder(e, "cash")}
                       >
-                        Internet Banking
+                        Order
                       </button>
                     </div>
                   </div>
@@ -444,32 +481,6 @@ export function Checkout() {
 
   return (
     <div>
-      <Modal show={showModal} onHide={closeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Internet Banking</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group>
-            <Form.Label>
-              Please scan the QR code or transfer via this account number to pay
-            </Form.Label>
-
-            <img id="img" src={QRImg} alt="QR code" style={{ width: "100%" }} />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Close
-          </Button>
-          <Button
-            variant="dark"
-            onClick={(e) => submitOrder(e, "internet banking", 1)}
-          >
-            Checkout
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       <div className="py-4">
         <div className="container">{checkout_HTML}</div>
       </div>

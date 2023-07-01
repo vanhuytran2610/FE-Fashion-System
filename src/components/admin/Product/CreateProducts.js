@@ -174,6 +174,7 @@ export function CreateProducts() {
               <div className="px-2 row">
                 <div className="mb-3 col-md-6">
                   <label htmlFor="name" className="form-label">
+                    <span className="required text-danger">*</span>
                     Product Name:
                   </label>
                   <input
@@ -188,6 +189,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="price" className="form-label">
+                  <span className="required text-danger">*</span>
                     Product Price:
                   </label>
                   <input
@@ -203,6 +205,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-12">
                   <label htmlFor="description" className="form-label">
+                  <span className="required text-danger">*</span>
                     Description:
                   </label>
                   <textarea
@@ -216,6 +219,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="category_id" className="form-label">
+                  <span className="required text-danger">*</span>
                     Category:
                   </label>
                   <select
@@ -235,6 +239,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="color_id" className="form-label">
+                  <span className="required text-danger">*</span>
                     Color:
                   </label>
                   <select
@@ -258,6 +263,7 @@ export function CreateProducts() {
                       <div key={index} className="row">
                         <div className="col-md-6">
                           <label htmlFor="size_id" className="form-label">
+                          <span className="required text-danger">*</span>
                             Size:
                           </label>
                           <select
@@ -277,6 +283,7 @@ export function CreateProducts() {
                         </div>
                         <div className="mb-3 col-md-5">
                           <label htmlFor="quantity" className="form-label">
+                          <span className="required text-danger">*</span>
                             Product Quantity:
                           </label>
                           <input
@@ -313,6 +320,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="image_avatar" className="form-label">
+                  <span className="required text-danger">*</span>
                     Image Avatar:
                   </label>
                   <input

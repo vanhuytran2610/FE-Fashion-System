@@ -19,6 +19,7 @@ export function CreateCategory() {
             swal("Success", res.data.message, "success");
             setCategories([{ category: "" }]);
           } else if (res.data.status === 422) {
+            swal("Error", "Category has already been taken", "error");
             console.log(res.data.error);
           }
         });
@@ -66,6 +67,7 @@ export function CreateCategory() {
               <div key={index} className="row px-2">
                 <div className="mb-3 col-md-12">
                   <label for="category" class="form-label">
+                  <span className="required text-danger">*</span>
                     Category {index + 1}:
                   </label>
                   <div className="d-flex">

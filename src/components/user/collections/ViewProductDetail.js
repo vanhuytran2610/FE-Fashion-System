@@ -99,7 +99,7 @@ export function ViewProductDetail(props) {
       } else if (res.data.status === 404) {
         //Not Found
         swal("Warning", res.data.message, "warning");
-      } else if (res.data.status === 400) {
+      } else if (res.data.status === 407) {
         //Not Found
         swal("Warning", res.data.message, "warning");
       }
@@ -141,10 +141,13 @@ export function ViewProductDetail(props) {
                         </div>
                       ))}
                     </div>
-                  </div>):(
-                    <div className="d-flex justify-content-center">
-                        <h4><i class="bi bi-card-image"></i> No images available</h4>
-                    </div>
+                  </div>
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    <h4>
+                      <i class="bi bi-card-image"></i> No images available
+                    </h4>
+                  </div>
                 )}
               </div>
 
@@ -163,12 +166,10 @@ export function ViewProductDetail(props) {
                     style={{
                       backgroundColor: product && product.color.color,
                       width: "20px",
-                      height: "20px"
+                      height: "20px",
                     }}
                   ></div>
-                  <p className="mb-0 ms-2">
-                    {product && product.color.color}
-                  </p>
+                  <p className="mb-0 ms-2">{product && product.color.color}</p>
                 </div>
                 <hr></hr>
                 <div className="my-4">
@@ -190,13 +191,24 @@ export function ViewProductDetail(props) {
                     {product &&
                       product.sizes &&
                       product.sizes.map((item) => {
-                        if (item.pivot.quantity > 0) {
+                        if (item.pivot.quantity > 5) {
                           return (
                             <option key={item.id} value={item.id}>
                               {item.size}
                             </option>
                           );
-                        } else {
+                        } else if (
+                          item.pivot.quantity <= 5 &&
+                          item.pivot.quantity >= 1
+                        ) {
+                          return (
+                            <option key={item.id} value={item.id}>
+                              {item.size}{" "}
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              Low Stock
+                            </option>
+                          );
+                        } else if (item.pivot.quantity <= 0) {
                           return (
                             <option key={item.id} value={item.id} disabled>
                               {item.size}{" "}
@@ -253,12 +265,6 @@ export function ViewProductDetail(props) {
                       disabled={totalQuantity === 0}
                     >
                       Add to Cart
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger col-md-5 offset-md-2"
-                    >
-                      Add to Wishlist
                     </button>
                   </div>
                 </div>

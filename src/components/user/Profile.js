@@ -241,7 +241,7 @@ export function Profile() {
                 </div>
                 <div className="form-group mb-3">
                   <button type="submit" className="btn btn-secondary">
-                    Submit
+                    Save
                   </button>
                 </div>
               </form>

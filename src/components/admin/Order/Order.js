@@ -152,8 +152,8 @@ export function Order() {
     });
 
   return (
-    <div className="container px-4 mt-3">
-      <div className="card">
+    <div className="container px-4">
+      <div className="card my-5">
         <div className="card-header">
           <h4>Order List</h4>
         </div>

@@ -57,7 +57,7 @@ export function ViewCategory() {
               {category.category}
             </Link>
           ))}
-          <Link
+          {/* <Link
             className="nav-link collapsed"
             to="#"
             data-bs-toggle="collapse"
@@ -69,8 +69,8 @@ export function ViewCategory() {
             <div className="sb-sidenav-collapse-arrow">
               <i className="fas fa-angle-down"></i>
             </div>
-          </Link>
-          <div
+          </Link> */}
+          {/* <div
             className="collapse"
             id="collapseProducts"
             aria-labelledby="headingOne"
@@ -84,7 +84,7 @@ export function ViewCategory() {
                 Contact Us
               </Link>
             </nav>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

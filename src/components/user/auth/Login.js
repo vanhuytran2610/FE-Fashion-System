@@ -37,6 +37,7 @@ function Login() {
             "auth_name",
             result.data.data.firstname + " " + result.data.data.lastname
           );
+          localStorage.setItem("role_id", result.data.data.role_id);
           console.log(result.data.message);
 
           if (result.data.role === "Admin") {

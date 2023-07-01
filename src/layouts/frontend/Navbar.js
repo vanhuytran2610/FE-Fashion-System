@@ -82,6 +82,9 @@ function Navbar({ handleSidebarToggle }) {
       </ul>
     );
   } else {
+    const auth_token = localStorage.getItem("auth_token");
+    const role_id = localStorage.getItem("role_id");
+
     AuthButton = (
       <>
         <li className="nav-item dropdown">
@@ -100,6 +103,16 @@ function Navbar({ handleSidebarToggle }) {
             style={{ width: "50%" }}
             aria-labelledby="navbarDropdown"
           >
+            {role_id === "1" ? (
+              <li>
+              <Link className="dropdown-item" to="/admin" target="_blank" rel="noopener noreferrer">
+                Admin
+              </Link>
+              <li>
+              <hr className="dropdown-divider" />
+            </li>
+            </li>
+            ) : (null)}
             <li>
               <Link className="dropdown-item" to="/info">
                 {firstname} {lastname}
