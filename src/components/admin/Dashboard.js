@@ -20,6 +20,7 @@ function Dashboard() {
   const [currentMonthOrderLength, setCurrentMonthOrderLength] = useState(0);
 
   useEffect(() => {
+    document.title = "Dashboard";
     fetchOrderData();
     fetchCategories();
     fetchProducts();
@@ -143,18 +144,31 @@ function Dashboard() {
     setSelectedMonth(parseInt(event.target.value));
   };
 
+  const scrollToOrder = () => {
+    const orderElement = document.getElementById("order-section");
+    if (orderElement) {
+      orderElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="my-4">
       <div className="container px-4 py-2">
         <div className="row">
           <div className="col-xl-3 col-md-6">
             <div className="card bg-success text-white mb-4">
-            <div className="card-body row" style={{ fontWeight: "700", fontSize: "130%" }}>
+              <div
+                className="card-body row"
+                style={{ fontWeight: "700", fontSize: "130%" }}
+              >
                 <p className="col-sm-9">Total Categories</p>
                 <p className="col-sm-3 text-end">{categoryList.length}</p>
               </div>
               <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link className="small text-white stretched-link" to="/admin/view-category">
+                <Link
+                  className="small text-white stretched-link"
+                  to="/admin/view-category"
+                >
                   View Details
                 </Link>
                 <div className="small text-white">
@@ -165,12 +179,18 @@ function Dashboard() {
           </div>
           <div className="col-xl-3 col-md-6">
             <div className="card bg-warning text-white mb-4">
-            <div className="card-body row" style={{ fontWeight: "700", fontSize: "130%" }}>
+              <div
+                className="card-body row"
+                style={{ fontWeight: "700", fontSize: "130%" }}
+              >
                 <p className="col-sm-9">Total Products</p>
                 <p className="col-sm-3 text-end">{products.length}</p>
               </div>
               <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link className="small text-white stretched-link" to="/admin/view-product">
+                <Link
+                  className="small text-white stretched-link"
+                  to="/admin/view-product"
+                >
                   View Details
                 </Link>
                 <div className="small text-white">
@@ -181,12 +201,18 @@ function Dashboard() {
           </div>
           <div className="col-xl-3 col-md-6">
             <div className="card bg-secondary text-white mb-4">
-              <div className="card-body row" style={{ fontWeight: "700", fontSize: "130%" }}>
+              <div
+                className="card-body row"
+                style={{ fontWeight: "700", fontSize: "130%" }}
+              >
                 <p className="col-sm-9">Orders in Day</p>
                 <p className="col-sm-3 text-end">{dailyOrderQuantity}</p>
               </div>
               <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link className="small text-white stretched-link" to="/admin/orders">
+                <Link
+                  className="small text-white stretched-link"
+                  onClick={scrollToOrder}
+                >
                   View Details
                 </Link>
                 <div className="small text-white">
@@ -197,12 +223,18 @@ function Dashboard() {
           </div>
           <div className="col-xl-3 col-md-6">
             <div className="card bg-dark text-white mb-4">
-              <div className="card-body row" style={{ fontWeight: "700", fontSize: "130%" }}>
+              <div
+                className="card-body row"
+                style={{ fontWeight: "700", fontSize: "130%" }}
+              >
                 <p className="col-sm-9">Orders in Month</p>
                 <p className="col-sm-3 text-end">{currentMonthOrderLength}</p>
               </div>
               <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link className="small text-white stretched-link" to="/admin/orders">
+                <Link
+                  className="small text-white stretched-link"
+                  onClick={scrollToOrder}
+                >
                   View Details
                 </Link>
                 <div className="small text-white">
@@ -218,63 +250,68 @@ function Dashboard() {
             <h4>Order Statistics</h4>
           </div>
           <div className="card-body">
-            <div className="text-end">
-              <label
-                htmlFor="month-select"
-                style={{ fontWeight: "700" }}
-                className="mx-1"
-              >
-                Select Month:{" "}
-              </label>
-              <select
-                id="month-select"
-                value={selectedMonth}
-                onChange={handleMonthChange}
-                className="mx-1"
-                style={{ fontWeight: "700" }}
-              >
-                <option value={1}>January</option>
-                <option value={2}>February</option>
-                <option value={3}>March</option>
-                <option value={4}>April</option>
-                <option value={5}>May</option>
-                <option value={6}>June</option>
-                <option value={7}>July</option>
-                <option value={8}>August</option>
-                <option value={9}>September</option>
-                <option value={10}>October</option>
-                <option value={11}>November</option>
-                <option value={12}>December</option>
-              </select>
-            </div>
-            <div>
-              {monthlyOrderData &&
-                monthlyOrderData.labels &&
-                monthlyOrderData.data && (
-                  <Bar
-                    data={{
-                      labels: monthlyOrderData.labels,
-                      datasets: [
-                        {
-                          label: "Number of Orders",
-                          data: monthlyOrderData.data,
-                          backgroundColor: "rgba(0, 0, 0, 0.67)",
-                        },
-                      ],
-                    }}
-                    options={{
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          grace: "5%",
-                          ticks: {
-                            precision: 0,
+            <div className="my-3">
+              <div className="text-end">
+                <label
+                  htmlFor="month-select"
+                  style={{ fontWeight: "700" }}
+                  className="mx-1"
+                >
+                  Select Month:{" "}
+                </label>
+                <select
+                  id="month-select"
+                  value={selectedMonth}
+                  onChange={handleMonthChange}
+                  className="mx-1 rounded"
+                  style={{ fontWeight: "700" }}
+                >
+                  <option value={1}>January</option>
+                  <option value={2}>February</option>
+                  <option value={3}>March</option>
+                  <option value={4}>April</option>
+                  <option value={5}>May</option>
+                  <option value={6}>June</option>
+                  <option value={7}>July</option>
+                  <option value={8}>August</option>
+                  <option value={9}>September</option>
+                  <option value={10}>October</option>
+                  <option value={11}>November</option>
+                  <option value={12}>December</option>
+                </select>
+              </div>
+              <div>
+                {monthlyOrderData &&
+                  monthlyOrderData.labels &&
+                  monthlyOrderData.data && (
+                    <Bar
+                      data={{
+                        labels: monthlyOrderData.labels,
+                        datasets: [
+                          {
+                            label: "Number of Orders",
+                            data: monthlyOrderData.data,
+                            backgroundColor: "rgba(0, 0, 0, 0.67)",
+                          },
+                        ],
+                      }}
+                      options={{
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            grace: "5%",
+                            ticks: {
+                              precision: 0,
+                            },
                           },
                         },
-                      },
-                    }}
-                  />
-                )}
+                      }}
+                    />
+                  )}
+              </div>
+            </div>
+            <div id="order-section">
+              <Order />
             </div>
           </div>
         </div>

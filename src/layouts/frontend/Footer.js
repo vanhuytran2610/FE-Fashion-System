@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import React from "react";
 
-const Footer = ({ total, onCheckout }) => {
+const Footer = ({ total, onCheckout, cartLength }) => {
   return (
     <div
       className="navbar fixed-bottom navbar-light bg-light"
@@ -16,9 +16,24 @@ const Footer = ({ total, onCheckout }) => {
           {String(total).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND &nbsp;&nbsp;
         </div>
         <div className="navbar-brand">
-          <button type="button" className="input-group-text btn btn-dark" onClick={onCheckout}>
-            CHECKOUT
-          </button>
+          {cartLength > 0 ? (
+            <button
+              type="button"
+              className="input-group-text btn btn-dark"
+              onClick={onCheckout}
+            >
+              CHECKOUT
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="input-group-text btn btn-dark"
+              onClick={onCheckout}
+              disabled
+            >
+              CHECKOUT
+            </button>
+          )}
         </div>
       </div>
     </div>

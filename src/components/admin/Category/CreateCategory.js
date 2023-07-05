@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -46,6 +46,10 @@ export function CreateCategory() {
       setCategories(updatedCategories);
     }
   };
+
+  useEffect(() => {
+    document.title = "Create New Category"; // Set document title
+  }, []);
 
   return (
     <div className="container p-4">

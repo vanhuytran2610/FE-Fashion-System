@@ -1,7 +1,11 @@
+import React, { useEffect } from "react";
+
 import { Link } from "react-router-dom";
-import React from "react";
 
 export function Thankyou() {
+  useEffect(() => {
+    document.title = "Thank you"; // Set document title
+  }, []);
   return (
     <div className="mt-5">
       <h1 className="align-items-center justify-content-center d-flex">

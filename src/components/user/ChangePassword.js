@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 
@@ -53,6 +53,10 @@ export function ChangePassword() {
         setSuccess("");
       });
   };
+
+  useEffect(() => {
+    document.title = "Change Password"; // Set document title
+  }, []);
 
   return (
     <div className="container py-5">

@@ -1,5 +1,5 @@
 import { Link, useHistory } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Loading } from "../../Loading";
 import Navbar from "../../../layouts/frontend/Navbar";
@@ -15,6 +15,10 @@ function Login() {
     error: "",
     error_list: [],
   });
+
+  useEffect(() => {
+    document.title = "LOGIN"; // Set document title
+  }, []);
 
   const handleInput = (e) => {
     e.persist();

@@ -20,6 +20,7 @@ export function ViewProduct(props) {
 
   useEffect(() => {
     let isMounted = true;
+    
 
     const category_id = props.match.params.id;
     axios.get(`/api/get-products/${category_id}`).then((response) => {
@@ -27,6 +28,7 @@ export function ViewProduct(props) {
         if (response.data.status === 200) {
           setProduct(response.data.data.product);
           setCategory(response.data.data.category);
+          document.title = response.data.data.category.category;
           setLoading(false);
           console.log(response.data.data);
         } else if (response.data.status === 400) {

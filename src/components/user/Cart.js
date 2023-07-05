@@ -106,6 +106,7 @@ export function Cart() {
 
   useEffect(() => {
     let isMounted = true;
+    document.title = "Cart";
 
     axios.get(`/api/cart`).then((res) => {
       if (isMounted) {
@@ -269,7 +270,7 @@ export function Cart() {
           </div>
         </div>
       </div>
-      <Footer total={total_price_all} onCheckout={handleCheckout} />
+      <Footer total={total_price_all} onCheckout={handleCheckout} cartLength={cart.length} />
     </div>
   );
 }

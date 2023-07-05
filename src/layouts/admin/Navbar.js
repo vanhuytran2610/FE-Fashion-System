@@ -10,8 +10,9 @@ const Navbar = ({ handleSidebarToggle }) => {
     e.preventDefault();
 
     const authToken = localStorage.getItem("auth_token");
-
+    
     if (authToken) {
+
       axios
         .post(`api/auth/logout`)
         .then((result) => {

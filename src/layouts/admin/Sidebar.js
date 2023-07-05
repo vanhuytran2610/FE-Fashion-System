@@ -82,15 +82,6 @@ const Sidebar = ({ sidebarOpen }) => {
           </div>
           <Link
             className="nav-link"
-            to="/admin/orders"
-          >
-            <div className="sb-nav-link-icon">
-              <i class="bi bi-wallet-fill"></i>
-            </div>
-            Order List
-          </Link>
-          <Link
-            className="nav-link"
             to="/"
             target="_blank"
             rel="noopener noreferrer"

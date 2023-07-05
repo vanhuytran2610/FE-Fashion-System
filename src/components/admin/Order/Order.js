@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Loading } from "../../Loading";
 import ReactPaginate from "react-paginate";
 import axios from "axios";
+import moment from "moment";
 import swal from "sweetalert";
 
 export function Order() {
@@ -97,7 +98,7 @@ export function Order() {
             if (res.data.status === 200) {
               swal("Success", res.data.message, "success");
               setOrders((prevOrderList) =>
-              prevOrderList.filter(
+                prevOrderList.filter(
                   (item) => !selectedOrders.includes(item.id)
                 )
               );
@@ -133,6 +134,11 @@ export function Order() {
           <td>{item.phone}</td>
           <td>{item.email}</td>
           <td>
+            {moment(item.created_at)
+              .tz("Asia/Ho_Chi_Minh")
+              .format("HH:mm:ss DD-MM-YYYY")}
+          </td>
+          <td>
             <Link
               to={`order/${item.id}`}
               className="btn btn-success btn-sm mx-2"
@@ -152,65 +158,69 @@ export function Order() {
     });
 
   return (
-    <div className="container px-4">
-      <div className="card my-5">
-        <div className="card-header">
-          <h4>Order List</h4>
-        </div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      checked={selectAll}
-                      onChange={(e) => handleCheckboxChange(e, "all")}
-                    />
-                  </th>
-                  <th>ID</th>
-                  <th>Tracking No.</th>
-                  <th>Phone Number</th>
-                  <th>Email</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>{displayOrders}</tbody>
-            </table>
-            <div className="mb-3">
-              <button
-                type="button"
-                className="btn btn-danger btn-md"
-                onClick={deleteSelectedOrders}
-                disabled={selectedOrders.length === 0}
-              >
-                Delete Selected
-              </button>
+    <div className="pt-4">
+    <hr />
+      <div className="container px-0">
+        <div className="card border-0">
+          <div className="card-title bg-white row mx-1 my-0 pt-2">
+            <h4 className="col-md-6">Order List</h4>
+            <div className="pagination-container col-md-6">
+              <ReactPaginate
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePageChange}
+                containerClassName={"pagination justify-content-end"}
+                subContainerClassName={"pages pagination"}
+                activeClassName={"active"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+              />
             </div>
           </div>
-          <div className="pagination-container">
-            <ReactPaginate
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
-              breakLabel={"..."}
-              breakClassName={"break-me"}
-              pageCount={pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              onPageChange={handlePageChange}
-              containerClassName={"pagination justify-content-end"}
-              subContainerClassName={"pages pagination"}
-              activeClassName={"active"}
-              previousClassName={"page-item"}
-              previousLinkClassName={"page-link"}
-              nextClassName={"page-item"}
-              nextLinkClassName={"page-link"}
-              pageClassName={"page-item"}
-              pageLinkClassName={"page-link"}
-              breakClassName={"page-item"}
-              breakLinkClassName={"page-link"}
-            />
+          <div className="card-body">
+            <div className="table-responsive">
+              <table className="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={(e) => handleCheckboxChange(e, "all")}
+                      />
+                    </th>
+                    <th>ID</th>
+                    <th>Tracking No.</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Order Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>{displayOrders}</tbody>
+              </table>
+              <div className="mb-3">
+                <button
+                  type="button"
+                  className="btn btn-danger btn-md"
+                  onClick={deleteSelectedOrders}
+                  disabled={selectedOrders.length === 0}
+                >
+                  Delete Selected
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

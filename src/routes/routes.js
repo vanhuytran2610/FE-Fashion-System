@@ -5,6 +5,7 @@ import Dashboard from "../components/admin/Dashboard";
 import Login from "../components/user/auth/Login";
 import { Order } from "../components/admin/Order/Order";
 import { OrderDetail } from "../components/admin/Order/OrderDetail";
+import  Page404  from "../components/errors/Page404";
 import ProfileAdmin from "../components/admin/Profile";
 import Register from "../components/user/auth/Register";
 import { UpdateCategory } from "../components/admin/Category/UpdateCategory";
@@ -73,6 +74,12 @@ const routes = [
   },
   { path: "/admin/info", exact: true, name: "Profile", component: ProfileAdmin },
   { path: "/admin/change-password", exact: true, name: "ChangePassword", component: ChangePasswordAdmin },
+  {
+    path: "/admin/**",
+    exact: true,
+    name: "Page404",
+    component: Page404,
+  },
 ];
 
 export default routes;

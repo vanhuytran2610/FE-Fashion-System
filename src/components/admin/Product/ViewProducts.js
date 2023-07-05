@@ -19,6 +19,7 @@ export function ViewProducts() {
   };
 
   useEffect(() => {
+    document.title = "Product";
     axios
       .get("/api/auth/get-all-products")
       .then((response) => {

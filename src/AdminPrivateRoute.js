@@ -17,7 +17,8 @@ function AdminPrivateRoute({ ...rest }) {
   }
 
   useEffect(() => {
-    axios.get(`/api/checkingAuthenticated`)
+    axios
+      .get(`/api/checkingAuthenticated`)
       .then((response) => {
         if (response.status === 200) {
           setAuthenticated(true);
@@ -48,12 +49,16 @@ function AdminPrivateRoute({ ...rest }) {
     }
   );
 
-  const handleUnauthorized = (message = "Unauthorized: Please log in first") => {
+  const handleUnauthorized = (
+    message = "Unauthorized: Please log in first"
+  ) => {
     swal("Unauthorized", message, "warning");
     history.push("/login");
   };
 
-  const handleForbidden = (message = "Access Forbidden: Only admin has access") => {
+  const handleForbidden = (
+    message = "Access Forbidden: Only admin has access"
+  ) => {
     swal("Forbidden", message, "warning");
     history.push("/login");
   };

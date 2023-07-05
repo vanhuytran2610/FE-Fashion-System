@@ -11,6 +11,7 @@ function SearchResultsPage({ location }) {
     const query = new URLSearchParams(location.search);
     const term = query.get("term");
     setSearchTerm(term);
+    document.title = "Search";
 
     // Make the API call to retrieve search results based on the search term
     axios

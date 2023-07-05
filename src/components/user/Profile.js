@@ -20,6 +20,7 @@ export function Profile() {
   const [wards, setWards] = useState([]);
 
   useEffect(() => {
+    document.title = "Profiles";
     fetchProfile();
     fetchProvinces();
   }, []);

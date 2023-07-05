@@ -15,6 +15,7 @@ export function ViewCategory() {
   const [sortOrder, setSortOrder] = useState("");
 
   useEffect(() => {
+    document.title = "Category";
     fetchCategories();
   }, []);
 

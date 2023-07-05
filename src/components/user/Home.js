@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 
 import AutoSlider from "./AutoSilder";
 import image1 from "../../images/12.jpg";
@@ -14,6 +14,11 @@ function Home() {
   const images2 = [
     image3, image4, image5,
   ]
+
+  useEffect(() => {
+    document.title = "Home"; // Set document title
+  }, []);
+
   return (
     <div>
       <AutoSlider images={images1} interval={4000} />

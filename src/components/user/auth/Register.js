@@ -25,6 +25,7 @@ function Register() {
   const [wards, setWards] = useState([]);
 
   useEffect(() => {
+    document.title = "REGISTER";
     fetchProvinces();
   }, []);
 

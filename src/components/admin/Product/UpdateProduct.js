@@ -55,6 +55,7 @@ export function UpdateProduct(props) {
   };
 
   useEffect(() => {
+    document.title = "Update Product";
     // Fetch categories
     axios
       .get("/api/get-categories")

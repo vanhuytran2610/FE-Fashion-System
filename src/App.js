@@ -1,8 +1,6 @@
 import "./App.css";
 
 import {
-  Redirect,
-  Route,
   BrowserRouter as Router,
   Switch,
 } from "react-router-dom";

@@ -45,6 +45,7 @@ export function CreateProducts() {
   };
 
   useEffect(() => {
+    document.title = "Create New Product";
     // Fetch categories
     axios
       .get("/api/get-categories")

@@ -32,6 +32,7 @@ export function ViewProductDetail(props) {
       if (isMounted) {
         if (res.data.status === 200) {
           setProduct(res.data.data[0]);
+          document.title = res.data.data[0].name;
           setLoading(false);
           console.log(res.data.data);
         } else if (res.data.status === 404) {

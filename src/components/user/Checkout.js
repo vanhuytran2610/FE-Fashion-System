@@ -102,6 +102,7 @@ export function Checkout() {
 
   useEffect(() => {
     let isMounted = true;
+    document.title = "Checkout";
 
     axios.get(`/api/cart`).then((res) => {
       if (isMounted) {

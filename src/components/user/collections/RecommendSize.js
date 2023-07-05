@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { Loading } from "../../Loading";
 import { Modal } from "react-bootstrap";
 
 export function RecommendSize() {
@@ -165,7 +166,7 @@ export function RecommendSize() {
                 </button>
               </div>
             </div>
-            <div className="">
+            <div>
               <div
                 className="form-label text-center"
                 style={{ fontWeight: "700", fontSize: "120%" }}

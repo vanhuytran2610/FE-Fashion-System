@@ -15,7 +15,7 @@ export function OrderDetail(props) {
 
   useEffect(() => {
     let isMounted = true;
-    document.title = "Orders";
+    document.title = "Order Detail";
 
     axios
       .get(`/api/auth/order/${orderId}`)
