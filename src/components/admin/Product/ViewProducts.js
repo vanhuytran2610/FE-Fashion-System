@@ -12,7 +12,7 @@ export function ViewProducts() {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 2;
+  const itemsPerPage = 3;
 
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);

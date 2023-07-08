@@ -20,11 +20,17 @@ export function CreateProducts() {
   const [sizes, setSizes] = useState([]);
 
   const handleInput = (e) => {
+    if (e.target.name === "price" && e.target.value.length > 8) {
+      return; // Ignore input if it exceeds 8 characters
+    }
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
   const handleSizeChange = (e, index) => {
     const { name, value } = e.target;
+    if (name === "quantity" && value.length > 4) {
+      return; // Ignore input if it exceeds 4 characters
+    }
     setProduct((prevProduct) => {
       const updatedSizes = [...prevProduct.sizes];
       if (updatedSizes.length === 0) {
@@ -91,6 +97,24 @@ export function CreateProducts() {
       return;
     }
 
+    const sizeIds = new Set(); // Use a Set to keep track of unique size IDs
+    let hasDuplicateSize = false; // Flag to check for duplicate sizes
+  
+    // Check for duplicate size IDs
+    for (let i = 0; i < product.sizes.length; i++) {
+      const { size_id } = product.sizes[i];
+      if (sizeIds.has(size_id)) {
+        hasDuplicateSize = true;
+        break;
+      }
+      sizeIds.add(size_id);
+    }
+  
+    if (hasDuplicateSize) {
+      swal("Error", "Duplicate sizes are not allowed", "error");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", product.name);
     formData.append("description", product.description);
@@ -129,7 +153,11 @@ export function CreateProducts() {
           document.getElementById("images").value = "";
           console.log(response.data.data);
         } else if (response.data.status === 422) {
-          console.log(response.data.errors);
+          const { errors } = response.data;
+          if (errors && errors.name) {
+            console.log(errors.name[0]);
+            swal("Error", errors.name[0], "error");
+          }
         }
       })
       .catch((error) => {
@@ -190,7 +218,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="price" className="form-label">
-                  <span className="required text-danger">*</span>
+                    <span className="required text-danger">*</span>
                     Product Price:
                   </label>
                   <input
@@ -202,11 +230,15 @@ export function CreateProducts() {
                     onChange={handleInput}
                     value={product.price}
                     max={10000000}
+                    min={10000}
                   />
+                  <span className="required text-danger">
+                    <i>Max price is 10,000,000 VND</i>
+                  </span>
                 </div>
                 <div className="mb-3 col-md-12">
                   <label htmlFor="description" className="form-label">
-                  <span className="required text-danger">*</span>
+                    <span className="required text-danger">*</span>
                     Description:
                   </label>
                   <textarea
@@ -220,7 +252,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="category_id" className="form-label">
-                  <span className="required text-danger">*</span>
+                    <span className="required text-danger">*</span>
                     Category:
                   </label>
                   <select
@@ -240,7 +272,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="color_id" className="form-label">
-                  <span className="required text-danger">*</span>
+                    <span className="required text-danger">*</span>
                     Color:
                   </label>
                   <select
@@ -264,7 +296,7 @@ export function CreateProducts() {
                       <div key={index} className="row">
                         <div className="col-md-6">
                           <label htmlFor="size_id" className="form-label">
-                          <span className="required text-danger">*</span>
+                            <span className="required text-danger">*</span>
                             Size:
                           </label>
                           <select
@@ -275,16 +307,28 @@ export function CreateProducts() {
                             required
                           >
                             <option value="">Select Size</option>
-                            {sizes.map((item) => (
-                              <option key={item.id} value={item.id}>
-                                {item.size}
-                              </option>
-                            ))}
+                            {sizes.map((item) => {
+                              const isSizeSelected = product.sizes.some(
+                                (s) => s.size_id === item.id && s !== size
+                              );
+                              const isCurrentSize = size.size_id === item.id;
+                              const isDisabled =
+                                isSizeSelected || isCurrentSize;
+                              return (
+                                <option
+                                  key={item.id}
+                                  value={item.id}
+                                  disabled={isDisabled}
+                                >
+                                  {item.size}
+                                </option>
+                              );
+                            })}
                           </select>
                         </div>
                         <div className="mb-3 col-md-5">
                           <label htmlFor="quantity" className="form-label">
-                          <span className="required text-danger">*</span>
+                            <span className="required text-danger">*</span>
                             Product Quantity:
                           </label>
                           <input
@@ -296,7 +340,11 @@ export function CreateProducts() {
                             onChange={(e) => handleSizeChange(e, index)}
                             value={size.quantity}
                             max={1000}
+                            min={1}
                           />
+                          <span className="required text-danger">
+                            <i>Max product quantity is 1000 items</i>
+                          </span>
                         </div>
                         <div className="col-md-1 pt-4">
                           {product.sizes.length > 1 && (
@@ -321,7 +369,7 @@ export function CreateProducts() {
                 </div>
                 <div className="mb-3 col-md-6">
                   <label htmlFor="image_avatar" className="form-label">
-                  <span className="required text-danger">*</span>
+                    <span className="required text-danger">*</span>
                     Image Avatar:
                   </label>
                   <input

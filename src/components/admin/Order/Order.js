@@ -1,3 +1,5 @@
+import "moment-timezone";
+
 import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
@@ -6,6 +8,7 @@ import ReactPaginate from "react-paginate";
 import axios from "axios";
 import moment from "moment";
 import swal from "sweetalert";
+import vi from "moment/locale/vi";
 
 export function Order() {
   const [loading, setLoading] = useState(true);
@@ -119,6 +122,7 @@ export function Order() {
   const displayOrders = orders
     .slice(offset, offset + itemsPerPage)
     .map((item) => {
+      const vietnameseTime = moment.utc(item.created_at).format("HH:mm:ss, DD-MM-YYYY");
       return (
         <tr key={item.id}>
           <td>
@@ -133,11 +137,7 @@ export function Order() {
           <td>{item.tracking_no}</td>
           <td>{item.phone}</td>
           <td>{item.email}</td>
-          <td>
-            {moment(item.created_at)
-              .tz("Asia/Ho_Chi_Minh")
-              .format("HH:mm:ss DD-MM-YYYY")}
-          </td>
+          <td>{vietnameseTime}</td>
           <td>
             <Link
               to={`order/${item.id}`}
@@ -159,7 +159,7 @@ export function Order() {
 
   return (
     <div className="pt-4">
-    <hr />
+      <hr />
       <div className="container px-0">
         <div className="card border-0">
           <div className="card-title bg-white row mx-1 my-0 pt-2">

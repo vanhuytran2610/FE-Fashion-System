@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import "chart.js/auto";
 
 import { Bar } from "react-chartjs-2";
@@ -18,6 +16,7 @@ function Dashboard() {
   const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentMonthOrderLength, setCurrentMonthOrderLength] = useState(0);
+  const [currentDayOrderData, setCurrentDayOrderData] = useState({});
 
   useEffect(() => {
     document.title = "Dashboard";
@@ -35,7 +34,6 @@ function Dashboard() {
       );
       if (response.data.status === 200) {
         const orders = response.data.data;
-        // Process the orders data and extract the necessary information
         const orderStatistics = processOrderData(orders);
         setMonthlyOrderData(orderStatistics);
       }
@@ -50,9 +48,10 @@ function Dashboard() {
       if (response.data.status === 200) {
         const orders = response.data.data;
         setDailyOrderData(processOrderData(orders));
+        const today = new Date().toISOString().split("T")[0];
+        console.log(today);
         const currentDateOrders = orders.filter((order) => {
-          const orderDate = new Date(order.created_at).toLocaleDateString();
-          const today = new Date().toLocaleDateString();
+          const orderDate = order.created_at.split("T")[0];
           return orderDate === today;
         });
         setDailyOrderQuantity(currentDateOrders.length);
@@ -129,13 +128,13 @@ function Dashboard() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const daysInMonth = new Date(currentYear, selectedMonth, 0).getDate();
-    const monthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    const monthDays = Array.from({ length: daysInMonth }, (_, i) => i+1);
 
     // Prepare the data for the chart
     const chartLabels = monthDays.map(
       (day) => `${currentYear}-${selectedMonth}-${day}`
     );
-    const chartData = monthDays.map((day) => orderStatistics[day] || 0);
+    const chartData = monthDays.map((day) => orderStatistics[day+1] || 0);
 
     return { labels: chartLabels, data: chartData };
   };

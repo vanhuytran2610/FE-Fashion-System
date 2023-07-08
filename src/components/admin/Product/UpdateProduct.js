@@ -231,6 +231,7 @@ export function UpdateProduct(props) {
                     onChange={handleInput}
                     value={product.price}
                     max={10000000}
+                    min={10000}
                   />
                 </div>
                 <div className="mb-3 col-md-12">
@@ -318,6 +319,7 @@ export function UpdateProduct(props) {
                             onChange={(e) => handleSizeChange(e, index)}
                             value={size.quantity}
                             max={1000}
+                            min={1}
                           />
                         </div>
                         <div className="col-md-1 pt-4">

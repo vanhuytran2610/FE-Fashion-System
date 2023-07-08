@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Navbar from "../../../layouts/frontend/Navbar";
 import axios from "axios";
+import swal from "sweetalert";
 import { useHistory } from "react-router-dom";
 
 function Register() {

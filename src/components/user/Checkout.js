@@ -174,10 +174,10 @@ export function Checkout() {
     const selectedDistrict = checkoutInput.district;
     const selectedWard = checkoutInput.ward;
 
-    if (!selectedProvince || !selectedDistrict || !selectedWard) {
-      // Province, district, or ward is not selected
-      return;
-    }
+    // if (!selectedProvince || !selectedDistrict || !selectedWard) {
+    //   // Province, district, or ward is not selected
+    //   return;
+    // }
 
     var data = {
       firstname: checkoutInput.firstname,
@@ -206,7 +206,7 @@ export function Checkout() {
                 swal("Success", res.data.message, "success").then(() => {
                   window.location.replace("/thankyou");
                 });
-
+                setLoading(false);
                 setError([]);
               } else if (res.data.status === 422) {
                 swal("All fields are mandatory", "", "error");

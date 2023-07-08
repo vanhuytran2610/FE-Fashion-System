@@ -124,7 +124,7 @@ export function OrderDetail(props) {
                         Purchase Date:{" "}
                         {moment(item.created_at)
                           .tz("Asia/Ho_Chi_Minh")
-                          .format("HH:mm:ss DD-MM-YYYY")}
+                          .format("HH:mm:ss, DD-MM-YYYY")}
                       </p>
                     </li>
                     <li>
