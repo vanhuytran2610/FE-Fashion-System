@@ -113,14 +113,16 @@ function Dashboard() {
   const processOrderData = (orders) => {
     // Process the orders data and extract the necessary information for statistics
     const orderStatistics = {};
-
+    
     // Loop through the orders and group them by date
     orders.forEach((order) => {
-      const orderDate = new Date(order.created_at).getDate();
-      if (orderStatistics.hasOwnProperty(orderDate)) {
-        orderStatistics[orderDate]++;
+      const orderDate = new Date(order.created_at).toISOString().split("T")[0];
+      const day = new Date(orderDate).getDate();
+      console.log(day);
+      if (orderStatistics.hasOwnProperty(day)) {
+        orderStatistics[day]++;
       } else {
-        orderStatistics[orderDate] = 1;
+        orderStatistics[day] = 1;
       }
     });
 
@@ -134,7 +136,7 @@ function Dashboard() {
     const chartLabels = monthDays.map(
       (day) => `${currentYear}-${selectedMonth}-${day}`
     );
-    const chartData = monthDays.map((day) => orderStatistics[day+1] || 0);
+    const chartData = monthDays.map((day) => orderStatistics[day] || 0);
 
     return { labels: chartLabels, data: chartData };
   };
