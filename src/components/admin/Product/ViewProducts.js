@@ -13,6 +13,8 @@ export function ViewProducts() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 3;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -20,6 +22,11 @@ export function ViewProducts() {
 
   useEffect(() => {
     document.title = "Product";
+    loadProducts();
+  }, []);
+
+  const loadProducts = () => {
+    setLoading(true);
     axios
       .get("/api/auth/get-all-products")
       .then((response) => {
@@ -32,7 +39,31 @@ export function ViewProducts() {
         console.error(error);
         setLoading(false);
       });
-  }, []);
+  };
+
+  const handleSearch = () => {
+    if (searchTerm) {
+      setLoading(true);
+      axios
+        .get(`/api/products/search?search=${searchTerm}`)
+        .then((response) => {
+          setSearchResults(response.data);
+
+          console.log(searchResults.length);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   const handleCheckboxChange = (e, productId) => {
     const checked = e.target.checked;
@@ -112,8 +143,14 @@ export function ViewProducts() {
   };
 
   const offset = currentPage * itemsPerPage;
-  const pageCount = Math.ceil(products.length / itemsPerPage);
-  const paginatedProducts = products.slice(offset, offset + itemsPerPage);
+  const pageCount =
+    Math.ceil(
+      searchResults.length > 0 ? searchResults.length : products.length
+    ) / itemsPerPage;
+  const paginatedProducts =
+    searchResults.length > 0
+      ? searchResults.slice(offset, offset + itemsPerPage)
+      : products.slice(offset, offset + itemsPerPage);
 
   return (
     <div className="container p-4">
@@ -130,6 +167,18 @@ export function ViewProducts() {
           </h4>
         </div>
         <div className="card-body">
+          <div className="mb-3 d-flex">
+            <input
+              type="text"
+              className="form-control mx-1"
+              placeholder="Search products"
+              value={searchTerm}
+              onChange={handleInputChange}
+            />
+            <button className="btn btn-secondary mx-1" onClick={handleSearch}>
+              Search
+            </button>
+          </div>
           {loading ? (
             <Loading />
           ) : (
@@ -156,81 +205,172 @@ export function ViewProducts() {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedProducts.map((product, index) => (
-                    <tr key={product.id}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedProducts.includes(product.id)}
-                          onChange={(e) => handleCheckboxChange(e, product.id)}
-                        />
-                      </td>
-                      <td>{product.id}</td>
-                      <td>{product.category.category}</td>
-                      <td>{product.name}</td>
-                      <td>
-                        {product.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
-                        VND
-                      </td>
-                      <td className="w-25">
-                        <ul className="">
-                          {product.sizes && product.sizes.length > 0 ? (
-                            product.sizes.map((size) => (
-                              <li key={size.id}>
-                                Size: {size.size}, Quantity:{" "}
-                                {size.pivot.quantity}
-                              </li>
-                            ))
-                          ) : (
-                            <li>No sizes available</li>
-                          )}
-                        </ul>
-                      </td>
-                      <td>
-                        <img
-                          src={`http://localhost:8000/${product.image_avatar}`}
-                          width="80px"
-                          alt={product.name}
-                        />
-                      </td>
-                      <td>
-                        <ul className="list-unstyled">
-                          {product.images && product.images.length > 0 ? (
-                            product.images.map((image) => (
-                              <li key={image.id}>
-                                <img
-                                  width="80px"
-                                  src={`http://localhost:8000/${image.image_path}`}
-                                  alt={image.image_path}
-                                  className="my-1"
-                                />
-                              </li>
-                            ))
-                          ) : (
-                            <li>No images available</li>
-                          )}
-                        </ul>
-                      </td>
-                      <td>
-                        <Link
-                          to={`edit-product/${product.id}`}
-                          className="btn btn-warning btn-md"
-                          // onClick={() => deleteCategory(item.id)}
-                        >
-                          Edit
-                        </Link>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-md"
-                          onClick={() => deleteProduct(product.id)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {searchTerm !== "" ? (
+                    searchResults.length > 0 ? (
+                      paginatedProducts.map((product, index) => (
+                        <tr key={product.id}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedProducts.includes(product.id)}
+                              onChange={(e) =>
+                                handleCheckboxChange(e, product.id)
+                              }
+                            />
+                          </td>
+                          <td>{product.id}</td>
+                          <td>{product.category.category}</td>
+                          <td>{product.name}</td>
+                          <td>
+                            {product.price.replace(
+                              /\B(?=(\d{3})+(?!\d))/g,
+                              ","
+                            )}{" "}
+                            VND
+                          </td>
+                          <td className="w-25">
+                            <ul>
+                              {product.sizes && product.sizes.length > 0 ? (
+                                product.sizes.map((size) => (
+                                  <li key={size.id}>
+                                    Size: {size.size}, Quantity:{" "}
+                                    {size.pivot.quantity}
+                                  </li>
+                                ))
+                              ) : (
+                                <li>No sizes available</li>
+                              )}
+                            </ul>
+                          </td>
+                          <td>
+                            <img
+                              src={`http://localhost:8000/${product.image_avatar}`}
+                              width="80px"
+                              alt={product.name}
+                            />
+                          </td>
+                          <td>
+                            <ul className="list-unstyled">
+                              {product.images && product.images.length > 0 ? (
+                                product.images.map((image) => (
+                                  <li key={image.id}>
+                                    <img
+                                      width="80px"
+                                      src={`http://localhost:8000/${image.image_path}`}
+                                      alt={image.image_path}
+                                      className="my-1"
+                                    />
+                                  </li>
+                                ))
+                              ) : (
+                                <li>No images available</li>
+                              )}
+                            </ul>
+                          </td>
+                          <td>
+                            <Link
+                              to={`edit-product/${product.id}`}
+                              className="btn btn-warning btn-md"
+                            >
+                              Edit
+                            </Link>
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-danger btn-md"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="10">
+                          <h4>No products found</h4>
+                        </td>
+                      </tr>
+                    )
+                  ) : (
+                    paginatedProducts.map((product, index) => (
+                      <tr key={product.id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.includes(product.id)}
+                            onChange={(e) =>
+                              handleCheckboxChange(e, product.id)
+                            }
+                          />
+                        </td>
+                        <td>{product.id}</td>
+                        <td>{product.category.category}</td>
+                        <td>{product.name}</td>
+                        <td>
+                          {product.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+                          VND
+                        </td>
+                        <td className="w-25">
+                          <ul>
+                            {product.sizes && product.sizes.length > 0 ? (
+                              product.sizes.map((size) => (
+                                <li key={size.id}>
+                                  Size: {size.size}, Quantity:{" "}
+                                  {size.pivot.quantity}
+                                </li>
+                              ))
+                            ) : (
+                              <li>No sizes available</li>
+                            )}
+                          </ul>
+                        </td>
+                        <td>
+                          <img
+                            src={`http://localhost:8000/${product.image_avatar}`}
+                            width="80px"
+                            alt={product.name}
+                          />
+                        </td>
+                        <td>
+                          <ul className="list-unstyled">
+                            {product.images && product.images.length > 0 ? (
+                              product.images.map((image) => (
+                                <li key={image.id}>
+                                  <img
+                                    width="80px"
+                                    src={`http://localhost:8000/${image.image_path}`}
+                                    alt={image.image_path}
+                                    className="my-1"
+                                  />
+                                </li>
+                              ))
+                            ) : (
+                              <li>No images available</li>
+                            )}
+                          </ul>
+                        </td>
+                        <td>
+                          <Link
+                            to={`edit-product/${product.id}`}
+                            className="btn btn-warning btn-md"
+                          >
+                            Edit
+                          </Link>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-md"
+                            onClick={() => deleteProduct(product.id)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
               <div className="mb-3">

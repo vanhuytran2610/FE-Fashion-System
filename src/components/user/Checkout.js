@@ -420,6 +420,7 @@ export function Checkout() {
             <table className="table table-bordered">
               <thead>
                 <tr>
+                  <th>Image</th>
                   <th width="50%">Product</th>
                   <th>Price</th>
                   <th>Qty</th>
@@ -433,6 +434,13 @@ export function Checkout() {
                   total_price_all += totalCartPrice;
                   return (
                     <tr key={idx}>
+                      <td>
+                        <img
+                          src={`http://localhost:8000/${item.product.image_avatar}`}
+                          alt={item.product.name}
+                          className="w-50"
+                        />
+                      </td>
                       <td>{item.product.name}</td>
                       <td>
                         {item.product.price.replace(
@@ -456,7 +464,7 @@ export function Checkout() {
                   <td colSpan="2" className="text-end fw-bold">
                     Total
                   </td>
-                  <td colSpan="2" className="text-end fw-bold">
+                  <td colSpan="3" className="text-end fw-bold">
                     {String(total_price_all).replace(
                       /\B(?=(\d{3})+(?!\d))/g,
                       ","
