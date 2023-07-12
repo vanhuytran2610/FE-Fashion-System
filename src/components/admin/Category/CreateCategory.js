@@ -10,6 +10,15 @@ export function CreateCategory() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const existingCategories = categories.map((cat) =>
+        cat.category.toLowerCase()
+      );
+      const uniqueCategories = [...new Set(existingCategories)];
+
+      if (existingCategories.length !== uniqueCategories.length) {
+        swal("Error", "Duplicate categories are not allowed", "error");
+        return;
+      }
       await axios
         .post("/api/auth/create-category", {
           categories,
@@ -36,7 +45,10 @@ export function CreateCategory() {
   };
 
   const handleAddCategory = () => {
-    setCategories([...categories, { category: "" }]);
+    const lastCategory = categories[categories.length - 1];
+    if (lastCategory.category !== "") {
+      setCategories([...categories, { category: "" }]);
+    }
   };
 
   const handleRemoveCategory = (index) => {
@@ -61,7 +73,7 @@ export function CreateCategory() {
               to="/admin/view-category"
               className="btn btn-secondary btn-md float-end"
             >
-              <i class="bi bi-arrow-left-circle"></i> {''}View Category
+              <i class="bi bi-arrow-left-circle"></i> View Category
             </Link>
           </h4>
         </div>
@@ -70,8 +82,8 @@ export function CreateCategory() {
             {categories.map((category, index) => (
               <div key={index} className="row px-2">
                 <div className="mb-3 col-md-12">
-                  <label for="category" class="form-label">
-                  <span className="required text-danger">*</span>
+                  <label htmlFor="category" className="form-label">
+                    <span className="required text-danger">*</span>
                     Category {index + 1}:
                   </label>
                   <div className="d-flex">
@@ -87,7 +99,7 @@ export function CreateCategory() {
                     <div className="col-md-1 px-5 pt-1">
                       {categories.length > 1 && (
                         <i
-                          class="bi bi-dash-circle-fill"
+                          className="bi bi-dash-circle-fill"
                           style={{ fontSize: 20 }}
                           onClick={() => handleRemoveCategory(index)}
                         ></i>
@@ -102,7 +114,7 @@ export function CreateCategory() {
               className="btn btn-secondary my-3 mx-2"
               onClick={handleAddCategory}
             >
-              <i class="bi bi-plus-circle-fill"></i> Add Category
+              <i className="bi bi-plus-circle-fill"></i> Add Category
             </button>
             <br></br>
             <button type="submit" className="btn btn-dark float-end my-3 mx-2">

@@ -116,6 +116,7 @@ function Register() {
             localStorage.setItem("auth_name", result.data.data.firstname + " " + result.data.data.lastname);
             console.log(result.data.data);
             history.push("/");
+            window.location.reload();
           } else {
             setRegister({ ...registerInput, error_list: result.data.error });
           }

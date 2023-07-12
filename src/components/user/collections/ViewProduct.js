@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/img-redundant-alt */
-
 import { Link, useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 

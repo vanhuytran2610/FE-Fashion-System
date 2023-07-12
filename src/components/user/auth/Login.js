@@ -46,6 +46,7 @@ function Login() {
 
           if (result.data.role === "Admin") {
             history.push("/admin/dashboard");
+            window.location.reload();
           } else if (result.data.role === "User") {
             history.push("/");
             window.location.reload();

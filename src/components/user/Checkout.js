@@ -4,6 +4,7 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 
+import ErrorBoundary from "../../ErrorBoundary";
 import { Loading } from "../Loading";
 import QRImg from "../../images/QR.png";
 import ReactDOM from "react-dom";
@@ -45,30 +46,44 @@ export function Checkout() {
 
   useEffect(() => {
     fetchProvinces();
+    fetchDistricts();
+    fetchWards();
   }, []);
 
   const fetchProvinces = () => {
-    axios.get("/api/getProvince").then((response) => {
-      setProvinces(response.data.province);
-    });
+    try {
+      axios.get("/api/getProvince").then((response) => {
+        setProvinces(response.data.province);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const fetchDistricts = (provinceCode) => {
-    axios.get(`/api/getDistrict/${provinceCode}`).then((response) => {
-      if (response.data.status === 404) {
-        console.log(response.data.message);
-      }
-      setDistricts(response.data.district);
-    });
+    try {
+      axios.get(`/api/getDistrict/${provinceCode}`).then((response) => {
+        if (response.data.status === 404) {
+          console.log(response.data.message);
+        }
+        setDistricts(response.data.district);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const fetchWards = (districtCode) => {
-    axios.get(`/api/getWard/${districtCode}`).then((response) => {
-      if (response.data.status === 404) {
-        console.log(response.data.message);
-      }
-      setWards(response.data.ward);
-    });
+    try {
+      axios.get(`/api/getWard/${districtCode}`).then((response) => {
+        if (response.data.status === 404) {
+          console.log(response.data.message);
+        }
+        setWards(response.data.ward);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleProvinceChange = (e) => {
@@ -347,7 +362,6 @@ export function Checkout() {
                       value={checkoutInput.province}
                       required
                     >
-                      <option value="">Select Province</option>
                       {provinces.map((province) => (
                         <option key={province.code} value={province.code}>
                           {province.name}
